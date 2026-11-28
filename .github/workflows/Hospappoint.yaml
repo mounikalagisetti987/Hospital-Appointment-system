@@ -28,7 +28,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ${{ steps.ecr.outputs.registry }}/simple-backend:${{ github.sha }}
+          tags: ${{ steps.ecr.outputs.registry }}/simple-front:${{ github.sha }}
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v6
