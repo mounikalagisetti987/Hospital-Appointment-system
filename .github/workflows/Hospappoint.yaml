@@ -11,13 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7 #checkout code 
-      
       - uses: aws-actions/configure-aws-credentials@v6.3.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
-
       - name: Login to Amazon ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -37,7 +35,7 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ steps.ecr.outputs.registry }}/simple-front:${{ github.sha }}
- deploy:
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +53,7 @@ jobs:
           port: 22
           key: ${{ secrets.KEY }}
           script: |
-            aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 021628611487.dkr.ecr.us-east-2.amazonaws.com
+            aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 021628611487.dkr.ecr.us-east-2.amazonaws.com
             docker pull 021628611487.dkr.ecr.us-east-2.amazonaws.com/front-end:${{ github.sha }}
             docker pull 021628611487.dkr.ecr.us-east-2.amazonaws.com/back-end:${{ github.sha }}
             docker rm -f backend frontend
