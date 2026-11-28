@@ -5,7 +5,7 @@ on:
     branches:
       - main
 
-# in jenkins we have stage, here in github actions we have jobs
+# in jenkins we have stage, here in github actions we have job
 jobs:
   build:
     runs-on: ubuntu-latest
