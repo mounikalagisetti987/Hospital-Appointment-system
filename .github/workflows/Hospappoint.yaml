@@ -37,3 +37,27 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ steps.ecr.outputs.registry }}/simple-front:${{ github.sha }}
+ deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      
+      - name: Execute remote SSH commands using password
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOSTID }}
+          username: ubuntu
+          port: 22
+          key: ${{ secrets.KEY }}
+          script: |
+            aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 021628611487.dkr.ecr.us-east-2.amazonaws.com
+            docker pull 021628611487.dkr.ecr.us-east-2.amazonaws.com/front-end:${{ github.sha }}
+            docker pull 021628611487.dkr.ecr.us-east-2.amazonaws.com/back-end:${{ github.sha }}
+            docker rm -f backend frontend
+            docker run -d --name backend --network hospital-net -p 8000:8000 021628611487.dkr.ecr.us-east-2.amazonaws.com/back-end:${{ github.sha }}
+            docker run -d --name frontend --network hospital-net -p 3000:80 021628611487.dkr.ecr.us-east-2.amazonaws.com/front-end:${{ github.sha }}
