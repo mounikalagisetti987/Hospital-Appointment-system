@@ -56,6 +56,6 @@ jobs:
             aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 021628611487.dkr.ecr.us-east-2.amazonaws.com
             docker pull 021628611487.dkr.ecr.us-east-2.amazonaws.com/front-end:${{ github.sha }}
             docker pull 021628611487.dkr.ecr.us-east-2.amazonaws.com/back-end:${{ github.sha }}
-            docker rm -f backend frontend
+            docker rm -f back-end front-end
             docker run -d --name backend --network hospital-net -p 8000:8000 021628611487.dkr.ecr.us-east-2.amazonaws.com/back-end:${{ github.sha }}
             docker run -d --name frontend --network hospital-net -p 3000:80 021628611487.dkr.ecr.us-east-2.amazonaws.com/front-end:${{ github.sha }}
